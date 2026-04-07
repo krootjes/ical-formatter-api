@@ -1,9 +1,10 @@
 services:
   atformatterapi:
     build: .
+    image: atformatterapi
     container_name: atFormatterAPI
     ports:
       - "8080:8080"
     restart: unless-stopped
     volumes:
-      - ./config.json:/app/config.json
+      - ./data:/app
