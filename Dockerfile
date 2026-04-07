@@ -13,7 +13,6 @@ FROM alpine:3.20
 WORKDIR /app
 
 COPY --from=builder /atFormatterAPI /atFormatterAPI
-COPY config.json /app/config.json
 
 EXPOSE 8080
 
