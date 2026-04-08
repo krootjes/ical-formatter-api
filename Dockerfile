@@ -10,12 +10,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /atFormatterAPI main.go
 
 FROM alpine:3.20
 
-LABEL org.opencontainers.image.source=https://github.com/krootjes/atFormatterAPI
+LABEL org.opencontainers.image.source=https://github.com/krootjes/ical-formatter-api
 
 WORKDIR /app
 
-COPY --from=builder /atFormatterAPI /atFormatterAPI
+COPY --from=builder /ical-formatter-api /ical-formatter-api
 
 EXPOSE 8080
 
-CMD ["/atFormatterAPI"]
+CMD ["/ical-formatter-api"]

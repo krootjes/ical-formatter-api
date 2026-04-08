@@ -1,4 +1,4 @@
-module atFormatterAPI
+module ical-formatter-api
 
 go 1.24
 

@@ -1,4 +1,4 @@
-# atFormatterAPI
+# ical-formatter-api
 
 A small Go service that fetches an ICS/iCal work calendar, parses and filters events, and exposes a simplified per-day schedule as a REST API — designed for use with Home Assistant.
 
@@ -46,9 +46,9 @@ The service is designed to run in Docker only. It always listens on internal por
 
 ```yaml
 services:
-  atformatterapi:
-    container_name: atformatterapi
-    image: ghcr.io/krootjes/atformatterapi:latest
+  ical-formatter-api:
+    container_name: ical-formatter-api
+    image: ghcr.io/krootjes/ical-formatter-api:latest
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -155,7 +155,7 @@ Add the following to your `rest.yaml` to fetch the schedule as a sensor. Store y
 
 **`secrets.yaml`:**
 ```yaml
-atformatterapi_key: "your-api-key"
+ical_formatter_api_key: "your-api-key"
 ```
 
 **`rest.yaml`:**
@@ -164,7 +164,7 @@ atformatterapi_key: "your-api-key"
   timeout: 15
   scan_interval: 3600
   headers:
-    X-API-Key: !secret atformatterapi_key
+    X-API-Key: !secret ical_formatter_api_key
   sensor:
     - name: Werkplanning
       unique_id: werkplanning_sensor
