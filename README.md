@@ -144,3 +144,91 @@ X-API-Key: your-secret-key
 ```
 
 Requests without a valid key return `401 Unauthorized`. If `api_key` is empty, the API is unprotected.
+
+---
+
+## Home Assistant
+
+### REST sensor
+
+Add the following to your `rest.yaml` to fetch the schedule as a sensor. Store your API key in `secrets.yaml`.
+
+**`secrets.yaml`:**
+```yaml
+atformatterapi_key: "your-api-key"
+```
+
+**`rest.yaml`:**
+```yaml
+- resource: http://<your-host>:8080/api/schedule
+  timeout: 15
+  scan_interval: 3600
+  headers:
+    X-API-Key: !secret atformatterapi_key
+  sensor:
+    - name: Werkplanning
+      unique_id: werkplanning_sensor
+      value_template: "{{ value_json['data'] | list | length }} diensten"
+      json_attributes:
+        - data
+```
+
+To manually refresh the sensor without waiting for `scan_interval`, go to **Developer Tools → Actions**, call `homeassistant.update_entity` and select `sensor.werkplanning`.
+
+### Dashboard card
+
+Requires the [html-template-card](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card) custom card.
+
+Entries from the current week are highlighted green (confirmed), entries from future weeks are highlighted yellow (subject to change).
+
+```yaml
+type: custom:html-template-card
+title: Werkplanning
+ignore_line_breaks: true
+content: |
+  {% set items = state_attr('sensor.werkplanning', 'data') or [] %}
+  {% set today = now().date() %}
+  {% set week_start = today - timedelta(days=today.weekday()) %}
+  {% set week_end = week_start + timedelta(days=6) %}
+  <div style="margin-bottom:10px;display:flex;gap:16px;font-size:0.85em;opacity:0.8;">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div style="width:12px;height:12px;border-radius:3px;background:rgba(0,200,100,0.4);"></div>
+      <span>Definitief (deze week)</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div style="width:12px;height:12px;border-radius:3px;background:rgba(255,200,0,0.4);"></div>
+      <span>Onder voorbehoud</span>
+    </div>
+  </div>
+  <table style="width:100%;border-collapse:collapse;text-align:left;">
+    <thead>
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.15);">
+        <th style="padding:6px 4px;">Datum</th>
+        <th style="padding:6px 4px;">Dag</th>
+        <th style="padding:6px 4px;">Type</th>
+        <th style="padding:6px 4px;">Tijd</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in items %}
+        {% set d = strptime(i.date, '%Y-%m-%d').date() %}
+        {% if week_start <= d <= week_end %}
+          {% set bg = 'background:rgba(0,200,100,0.15);' %}
+        {% else %}
+          {% set bg = 'background:rgba(255,200,0,0.15);' %}
+        {% endif %}
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.08);{{ bg }}">
+          <td style="padding:6px 4px;">{{ i.date_human[:5] }}</td>
+          <td style="padding:6px 4px;">{{ i.weekday[:2] | capitalize }}</td>
+          <td style="padding:6px 4px;">{{ i.type }}</td>
+          <td style="padding:6px 4px;">{{ i.start }} – {{ i.end }}</td>
+        </tr>
+      {% endfor %}
+      {% if items|length == 0 %}
+        <tr>
+          <td colspan="4" style="padding:6px 4px;opacity:.7;"><i>Geen diensten gevonden.</i></td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+```
