@@ -61,7 +61,6 @@ Mount `./data` as a writable directory. On first run, the app creates a default 
 ### First run
 
 ```bash
-mkdir data
 docker compose up
 # app creates data/config.json and exits
 # edit data/config.json
