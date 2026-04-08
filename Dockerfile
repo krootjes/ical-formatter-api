@@ -6,7 +6,7 @@ COPY go.mod ./
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /atFormatterAPI main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /ical-formatter-api main.go
 
 FROM alpine:3.20
 
