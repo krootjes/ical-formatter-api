@@ -10,6 +10,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /atFormatterAPI main.go
 
 FROM alpine:3.20
 
+LABEL org.opencontainers.image.source=https://github.com/krootjes/atFormatterAPI
+
 WORKDIR /app
 
 COPY --from=builder /atFormatterAPI /atFormatterAPI
