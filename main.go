@@ -90,17 +90,23 @@ func main() {
 
 func loadConfig() {
 	defaultConfig := Config{
+		APIKey:      "",
 		CalendarURL: "",
 		UserFilter:  "",
 		DaysAhead:   30,
 		Weekdays:    [7]string{"sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"},
 		Rules: []Rule{
-			{Match: "matchA", Type: "replaceA"},
-			{Match: "matchB", Type: "replaceB"},
+			{Match: "matchA", Type: "replaceA", Priority: 1, DefaultStart: "08:00", DefaultEnd: "16:00"},
+			{Match: "matchB", Type: "replaceB", Priority: 2, DefaultStart: "08:00", DefaultEnd: "16:00"},
 		},
 		IgnoreRules: []IgnoreRule{
 			{Match: "ignoreA"},
 			{Match: "ignoreB"},
+		},
+		DefinitiveFrom: &DefinitiveConfig{
+			Weekday:  "friday",
+			Time:     "19:00",
+			Timezone: "Europe/Amsterdam",
 		},
 	}
 
